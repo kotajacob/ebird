@@ -20,10 +20,13 @@ const (
 	INTERVAL   = time.Second / 60 // tick rate
 	VIEWPORT_W = 80               // viewport width
 	VIEWPORT_H = 24               // viewport height
-	GRAVITY    = 0.01             // gravity constant
-	MAXGRAV    = 0.32             // maximum gravity
+	SPEED      = 1 / 60           // speed of incoming pipes per tick
+	GRAVITY    = 0.01             // gravity rate per tick
+	MAXGRAV    = 0.32             // maximum gravity per tick
 	JUMP       = -0.4             // jump speed
 	BIRD_X     = 18               // bird x cordinate
+	PIPE_W     = 3                // pipe width
+	PIPE_GAP   = 5                // pipe gap
 )
 
 var (
@@ -39,7 +42,7 @@ var (
 // model is a tea.Model representing the ebird game.
 type model struct {
 	bird  *bird
-	pipes *[]pipe
+	pipes []*pipe
 }
 
 // newModel creates a new model with default values.
@@ -64,6 +67,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.bird.jump()
 		}
 	case tickMsg:
+		for _, p := range m.pipes {
+			p.update()
+		}
 		m.bird.update()
 		return m, tick()
 	}
@@ -75,9 +81,10 @@ func (m model) getXY(x, y int) string {
 	// render sky
 	s := " "
 	// check pipes
-	for _, p := range *m.pipes {
-		if x >= p.x && x <= p.x+3 {
-			if y <= p.y || y > p.y+5 {
+	for _, p := range m.pipes {
+		xx := int(math.Round(p.x))
+		if x >= xx && x <= xx+PIPE_W {
+			if y <= p.height || y > p.height+PIPE_GAP {
 				s = PipeString.String()
 			}
 		}
@@ -107,10 +114,8 @@ func (m model) View() string {
 func main() {
 	rand.Seed(time.Now().Unix())
 	m := newModel()
-	pipes := []pipe{
-		{26, 10},
-	}
-	m.pipes = &pipes
+	p := newPipe()
+	m.pipes = append(m.pipes, p)
 	if err := tea.NewProgram(m, tea.WithAltScreen()).Start(); err != nil {
 		fmt.Println("game broke :(", err)
 		os.Exit(1)
