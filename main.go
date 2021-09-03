@@ -2,18 +2,23 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"os"
+	"strings"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
 
+// 0,0 is in the top left and the board is drawn from the top left.
+// As a result gravity is positive and jump is negative.
 const (
 	VIEWPORT_W = 80               // viewport width
 	VIEWPORT_H = 24               // viewport height
-	GRAVITY    = -0.005           // gravity constant
-	MAXSPEED   = 0.3              // maximum speed
-	JUMP       = 0.3              // jump speed
+	GRAVITY    = 0.01             // gravity constant
+	MAXGRAV    = 0.32             // maximum gravity
+	JUMP       = -0.4             // jump speed
+	BIRD_X     = 20               // bird x cordinate
 	INTERVAL   = time.Second / 60 // tick rate
 )
 
@@ -51,7 +56,25 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m model) View() string {
-	return fmt.Sprintf("bird y: %v\nbird speed: %v\n", m.bird.y, m.bird.speed)
+	var s strings.Builder
+	by := int(math.Round(m.bird.y))
+	for y := 0; y < VIEWPORT_H-1; y++ {
+		s.WriteString("│")
+		for x := 0; x < VIEWPORT_W-2; x++ {
+			switch x {
+			case BIRD_X:
+				if y == by {
+					s.WriteString("█")
+				} else {
+					s.WriteString(" ")
+				}
+			default:
+				s.WriteString(" ")
+			}
+		}
+		s.WriteString("│\n")
+	}
+	return s.String()
 }
 
 func main() {

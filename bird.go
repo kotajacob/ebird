@@ -2,7 +2,6 @@ package main
 
 // bird represents the playable character.
 type bird struct {
-	x     float64
 	y     float64
 	speed float64
 }
@@ -10,7 +9,6 @@ type bird struct {
 // newBird creates a new bird with default values.
 func newBird() *bird {
 	return &bird{
-		x:     20,
 		y:     14,
 		speed: 0,
 	}
@@ -19,7 +17,7 @@ func newBird() *bird {
 // update the bird's location and speed with gravity.
 func (b *bird) update() {
 	// change the speed of the bird with gravity
-	if b.speed > -MAXSPEED {
+	if b.speed < MAXGRAV {
 		b.speed += GRAVITY
 	}
 	// change location based on speed
