@@ -62,6 +62,20 @@ func (m model) Init() tea.Cmd {
 	return tick()
 }
 
+func collision(b *bird, p *pipe) bool {
+	if b.y > VIEWPORT_H {
+		return true
+	}
+	// check pipe
+	px := int(math.Round(p.x))
+	by := int(math.Round(b.y))
+	if BIRD_X >= px && BIRD_X <= px+PIPE_W {
+		if by <= p.height || by > p.height+PIPE_GAP {
+			return true
+		}
+	}
+	return false
+}
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
@@ -72,22 +86,28 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.bird.jump()
 		}
 	case tickMsg:
+		// spawn new pipe if needed
 		t := time.Time(msg)
 		if t.After(m.lastPipe.Add(FREQ)) {
 			np := newPipe()
 			m.pipes = append(m.pipes, np)
 			m.lastPipe = t
 		}
+		// update the bird
+		m.bird.update()
+		// move pipes and check for collisions
 		for _, p := range m.pipes {
 			p.update()
+			if collision(m.bird, p) {
+				return m, tea.Quit
+			}
 		}
-		m.bird.update()
 		return m, tick()
 	}
 	return m, nil
 }
 
-// getXY returns a character for an x,y cordinate.
+// getXY returns a character for an x,y coordinate.
 func (m model) getXY(x, y int) string {
 	// render sky
 	s := " "
