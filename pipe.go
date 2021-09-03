@@ -14,11 +14,11 @@ type pipe struct {
 func newPipe() *pipe {
 	return &pipe{
 		x:      VIEWPORT_W,
-		height: rand.Intn(VIEWPORT_H),
+		height: rand.Intn(VIEWPORT_H - PIPE_GAP - 2),
 	}
 }
 
 // update moves the pipe to the left.
 func (p *pipe) update() {
-	p.x -= 0.2
+	p.x -= SPEED
 }

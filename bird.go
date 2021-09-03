@@ -9,7 +9,7 @@ type bird struct {
 // newBird creates a new bird with default values.
 func newBird() *bird {
 	return &bird{
-		y:     14,
+		y:     12,
 		speed: 0,
 	}
 }
