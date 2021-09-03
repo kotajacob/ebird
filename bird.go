@@ -1,7 +1,5 @@
 package main
 
-import "github.com/muesli/termenv"
-
 // bird represents the playable character.
 type bird struct {
 	y     float64
@@ -14,14 +12,6 @@ func newBird() *bird {
 		y:     14,
 		speed: 0,
 	}
-}
-
-// String implements fmt.Stringer for bird which is used to display the bird in
-// game.
-func (b bird) String() string {
-	s := termenv.String("█").
-		Foreground(ColorProfile.Color(BIRD_COLOR))
-	return s.String()
 }
 
 // update the bird's location and speed with gravity.
