@@ -13,13 +13,14 @@ import (
 // 0,0 is in the top left and the board is drawn from the top left.
 // As a result gravity is positive and jump is negative.
 const (
+	INTERVAL   = time.Second / 60 // tick rate
 	VIEWPORT_W = 80               // viewport width
 	VIEWPORT_H = 24               // viewport height
 	GRAVITY    = 0.01             // gravity constant
 	MAXGRAV    = 0.32             // maximum gravity
 	JUMP       = -0.4             // jump speed
-	BIRD_X     = 20               // bird x cordinate
-	INTERVAL   = time.Second / 60 // tick rate
+	BIRD_X     = 18               // bird x cordinate
+	BIRD_COLOR = "11"             // ANSI color for the bird
 )
 
 // model is a tea.Model representing the ebird game.
@@ -64,7 +65,7 @@ func (m model) View() string {
 			switch x {
 			case BIRD_X:
 				if y == by {
-					s.WriteString("█")
+					s.WriteString(m.bird.String())
 				} else {
 					s.WriteString(" ")
 				}
