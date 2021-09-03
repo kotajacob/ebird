@@ -8,6 +8,7 @@ import (
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/muesli/termenv"
 )
 
 // 0,0 is in the top left and the board is drawn from the top left.
@@ -22,6 +23,8 @@ const (
 	BIRD_X     = 18               // bird x cordinate
 	BIRD_COLOR = "11"             // ANSI color for the bird
 )
+
+var ColorProfile = termenv.ColorProfile()
 
 // model is a tea.Model representing the ebird game.
 type model struct {
